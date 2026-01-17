@@ -1,0 +1,125 @@
+CONTRACT OF EMPLOYMENT
+
+This agreement, made on the 15th day of the month of January of the year 2026.
+
+Between:
+DRUK DIGITAL SOLUTIONS PVT LTD, located at Norzin Lam, Thimphu, Bhutan (hereinafter referred to as "the Employer")
+and
+TASHI WANGCHUK, holding ID No. 11504002231 (hereinafter referred to as "the Employee")
+
+WHEREAS the Employee and the Employer wish to enter into an employment agreement governing the terms and conditions of employment;
+
+THIS AGREEMENT WITNESSETH that in consideration of the premises and mutual covenants and agreements hereinafter contained is hereby acknowledged and agreed by and between the parties hereto as follows:
+
+1 Term of Employment
+The employment of the Employee shall commence from the date hereof and continue for an indefinite term until terminated in accordance with the provisions of this agreement.
+
+2 Probation
+The parties hereto agree that the initial six (6) month period of this agreement is "Probationary" in the following respects:
+a. The Employer shall have an opportunity to assess the performance, attitude, skills and other employment-related attributes and characteristics of the Employee;
+b. The Employee shall have an opportunity to learn about both the Employer and the position of employment;
+c. Either party may terminate the employment relationship at any time during the initial six month period with advance notice of seven days with justifiable reason, in which case there will be no continuing obligations of the parties to each other, financial or otherwise.
+
+3 Compensation and Benefits
+In consideration of the services to be provided by him hereunder, the Employee, during the term of his employment, shall be paid a basic salary of Nu. 45,000 a month, less applicable statutory deductions. In addition, the Employee is entitled to receive benefits in accordance with the Employer's standard benefit package, as amended from time to time.
+
+4 Duties and Responsibilities
+The Employee shall be employed in the capacity of Senior Systems Developer, the current duties and responsibilities of which are set out in Annexure "A" annexed hereto and forming part of this agreement.
+These duties and responsibilities may be amended from time to time in the sole discretion of the Employer, subject to formal notification of same being provided to the Employee.
+
+5 Termination of Employment
+Subsequent to completion of the probationary term of employment referred to in paragraph 2 herein, the Employer may terminate the employment of the Employee at any time:
+a. For just cause at common law, in which case the Employee is not entitled to any advance notice of termination or compensation in lieu of notice;
+b. The Employee and employer may terminate their employment at any time by providing at least seven days notice for probationer and 1 month advance notice for their intention to terminate the contract of employment or payment in lieu thereof.
+The entitlements and termination of services will be governed by the Labour and Employment Act, 2007 and its regulations and laws of the land.
+
+6 Confidentiality
+The Employee acknowledges that, in the course of performing and fulfilling his duties hereunder, he may have access to and be entrusted with confidential information concerning the present and contemplated financial status and activities of the Employer, the disclosure of any of which confidential information to competitors of the Employer would be highly detrimental to the interests of the Employer.
+The Employee further acknowledges and agrees that the right to maintain the confidentiality of such information constitutes a proprietary right which the Employer is entitled to protect.
+Accordingly, the Employee covenants and agrees with the Employer that he will not, during the continuance of this agreement, disclose any of such confidential information to any person, firm or corporation, nor shall he use same, except as required in the normal course of his engagement hereunder, and thereafter he shall not disclose or make use of the same.
+
+7 Assignment (Transfer of Contract of Employment)
+This agreement shall be assigned by the Employer to any successor employer and be binding upon the successor employer with the consent of the employee.
+The Employer shall ensure that the successor employer shall continue the provisions of this agreement as if it were the original party of the first part.
+This agreement may not be assigned by the Employee.
+
+8 Severability
+Each paragraph of this agreement shall be and remain separate from and independent of and severable from all and any other paragraphs herein except where otherwise indicated by the context of the agreement.
+The decision or declaration that one or more of the paragraphs are null and void shall have no effect on the remaining paragraphs of this agreement.
+
+9 Working Conditions
+
+Sr. 1
+Rights: Working Hours and rest periods
+Provisions: 8 hours a day excluding meal breaks
+Remarks: Minimum of 1.5 times at the rate of daily wage (10 PM to 8 AM in the following morning). One day rest period after six days of work.
+
+Sr. 2
+Rights: Public holidays
+Provisions: Minimum (9) days
+Remarks: Excluding other leave entitlements (Casual, annual, medical etc.) Both the parties may agree to substitute public holiday with another public holiday
+
+Sr. 3
+Rights: Leave
+Provisions: Casual (5), Annual Leave (10), Sick Leave (10), Maternity leave (56), Paternity Leave (10)
+Remarks: The leave provided must at the minimum be provided as prescribed by the Regulations on leave
+
+Sr. 4
+Rights: Provident Fund
+Provisions: Contribution of minimum of (10%)
+Remarks: Must be above the minimum ceiling and eligibility shall be governed by the regulations on Provident Fund
+
+Sr. 5
+Rights: Gratuity
+Provisions: Eligible after completion of (10) years of continuous employment.
+Remarks: Shall be calculated on the last basic salary multiplied by number of years of service.
+
+Sr. 6
+Rights: OHS equipment
+Provisions: All Personal Protective Equipment (PPE)
+Remarks: Provided free of cost by the employers and shall be governed by the regulations in force.
+
+10 Notice
+Any notice required to be given hereunder shall be deemed to have been properly given if delivered personally or sent by pre-paid registered mail as follows:
+a. to the Employee: Building 4, Flat 2B, Changzamtok, Thimphu
+b. to the Employer: PO Box 145, Norzin Lam, Thimphu
+and if sent by registered mail shall be deemed to have been received on the 5 working days of uninterrupted postal service following the date of mailing.
+Either party may change its address for notice at any time, by giving notice to the other party pursuant to the provisions of this agreement.
+
+11 Interpretation of Agreement
+The validity, interpretation, construction and performance of this agreement shall be governed by the Labour and Employment Act, 2007 and its Regulations.
+This agreement shall be interpreted with all necessary changes in gender and in number as the context may require and shall ensure to the benefit of and be binding upon the respective successors and assigns of the parties hereto.
+
+IN WITNESS WHEREOF the parties hereto have caused this agreement to be executed as of 15th day of January, 2026 and shall each retain a copy of the agreement in original.
+
+A. Janssen
+Signed by the Employer at Thimphu
+
+Tashi Wangchuk
+Signed by the Employee ID No: 11504002231 at Thimphu
+
+WITNESSES
+Name: Pema Dechen
+ID No: 10803001542
+Contact No: 17654321
+
+Name: Dorji Wangmo
+ID No: 11204005561
+Contact No: 77889900
+
+Annexure A
+The person in this position will be responsible to The Chief Technical Officer and undertake the following tasks and responsibilities (should be countersigned by both the parties).
+
+a. Job Responsibilities of Senior Systems Developer
+i. Design, develop, and maintain efficient, reusable, and reliable code for internal software systems.
+ii. Collaborate with cross-functional teams to define, design, and ship new features.
+iii. Identify bottlenecks and bugs, and devise solutions to these problems.
+iv. Help maintain code quality, organization, and automation standards.
+v. Mentor junior developers and conduct code reviews to ensure compliance with best practices.
+vi. Assist in the architectural design of new applications and database structures.
+
+Tashi Wangchuk
+Signature of Employee
+
+A. Janssen
+Signature of Employer
