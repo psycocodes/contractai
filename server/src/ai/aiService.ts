@@ -115,4 +115,32 @@ export class AIService {
 
     return analysis;
   }
+
+  /**
+   * Generate content using Gemini AI with custom prompt and system instruction
+   */
+  async generateContent(prompt: string, systemInstruction?: string): Promise<string> {
+    try {
+      const ai = getGeminiClient();
+
+      console.log('Calling Gemini API with model:', this.modelName);
+
+      const response = await ai.models.generateContent({
+        model: this.modelName,
+        contents: prompt,
+        systemInstruction: systemInstruction,
+      });
+
+      const responseText = response.text;
+
+      if (!responseText) {
+        throw new AppError('Empty response from AI model', 500);
+      }
+
+      return responseText;
+    } catch (error: any) {
+      console.error('Gemini API error:', error);
+      throw new AppError(`AI generation failed: ${error.message}`, 500);
+    }
+  }
 }

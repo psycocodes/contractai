@@ -13,6 +13,7 @@ import {
   analyzeContract,
   getAnalysis,
 } from '../contracts/aiController';
+import { generateAnnotations, getAnnotations } from '../contracts/annotationController';
 import { register, login, getCurrentUser } from '../auth/authController';
 import {
   createOrganization,
@@ -175,6 +176,22 @@ router.get(
   authenticate,
   requireOrganizationAccess,
   getAnalysis
+);
+
+// Generate AI annotations for a version (all roles can trigger)
+router.post(
+  '/versions/:versionId/annotate',
+  authenticate,
+  requireOrganizationAccess,
+  generateAnnotations
+);
+
+// Get annotations for a version (all roles can view)
+router.get(
+  '/versions/:versionId/annotations',
+  authenticate,
+  requireOrganizationAccess,
+  getAnnotations
 );
 
 export default router;

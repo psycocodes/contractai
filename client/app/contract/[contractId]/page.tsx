@@ -23,9 +23,12 @@ function ContractDetailContent() {
   const [selectedVersion, setSelectedVersion] = useState<any>(null);
   const [canonicalText, setCanonicalText] = useState<string>('');
   const [analysis, setAnalysis] = useState<any>(null);
+  const [annotations, setAnnotations] = useState<any[]>([]);
+  const [selectedAnnotation, setSelectedAnnotation] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState<'versions' | 'canonical' | 'analysis'>('versions');
+  const [annotationLoading, setAnnotationLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'versions' | 'canonical' | 'analysis' | 'annotations'>('versions');
 
   useEffect(() => {
     loadContract();
@@ -78,6 +81,34 @@ function ContractDetailContent() {
       const response = await apiClient.getAnalysis(versionId);
       setAnalysis(response.data);
       setActiveTab('analysis');
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const generateAnnotations = async (versionId: string) => {
+    try {
+      setError('');
+      setAnnotationLoading(true);
+      await apiClient.generateAnnotations(versionId);
+      // Fetch the generated annotations
+      await loadAnnotations(versionId);
+      setActiveTab('annotations');
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setAnnotationLoading(false);
+    }
+  };
+
+  const loadAnnotations = async (versionId: string) => {
+    try {
+      const response = await apiClient.getAnnotations(versionId);
+      setAnnotations(response.data || []);
+      // Also load canonical text if not loaded
+      if (!canonicalText) {
+        await loadCanonicalText(versionId);
+      }
     } catch (err: any) {
       setError(err.message);
     }
@@ -196,6 +227,19 @@ function ContractDetailContent() {
                     >
                       AI Analysis
                     </button>
+                    <button
+                      onClick={() => {
+                        setActiveTab('annotations');
+                        if (annotations.length === 0) loadAnnotations(selectedVersion._id);
+                      }}
+                      className={`px-6 py-3 font-medium ${
+                        activeTab === 'annotations'
+                          ? 'border-b-2 border-blue-500 text-blue-600'
+                          : 'text-gray-600 hover:text-gray-800'
+                      }`}
+                    >
+                      Annotations
+                    </button>
                   </div>
                 </div>
 
@@ -283,6 +327,43 @@ function ContractDetailContent() {
                             className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                           >
                             Trigger AI Analysis
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Annotations Tab */}
+                  {activeTab === 'annotations' && (
+                    <div>
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-semibold">AI Annotations</h3>
+                        <button
+                          onClick={() => generateAnnotations(selectedVersion._id)}
+                          disabled={annotationLoading}
+                          className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:bg-gray-400"
+                        >
+                          {annotationLoading ? 'Generating...' : 'Generate AI Annotations'}
+                        </button>
+                      </div>
+                      {annotations.length > 0 ? (
+                        <AnnotationsViewer
+                          canonicalText={canonicalText}
+                          annotations={annotations}
+                          selectedAnnotation={selectedAnnotation}
+                          onSelectAnnotation={setSelectedAnnotation}
+                        />
+                      ) : (
+                        <div className="text-center py-8">
+                          <p className="text-gray-600 mb-4">
+                            No annotations available yet.
+                          </p>
+                          <button
+                            onClick={() => generateAnnotations(selectedVersion._id)}
+                            disabled={annotationLoading}
+                            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:bg-gray-400"
+                          >
+                            {annotationLoading ? 'Generating...' : 'Generate AI Annotations'}
                           </button>
                         </div>
                       )}
@@ -380,6 +461,137 @@ function AIAnalysisDisplay({ analysis }: { analysis: any }) {
           {JSON.stringify(analysis, null, 2)}
         </pre>
       </details>
+    </div>
+  );
+}
+
+// Annotations Viewer Component
+function AnnotationsViewer({
+  canonicalText,
+  annotations,
+  selectedAnnotation,
+  onSelectAnnotation,
+}: {
+  canonicalText: string;
+  annotations: any[];
+  selectedAnnotation: any;
+  onSelectAnnotation: (annotation: any) => void;
+}) {
+  // Build highlighted text with annotations
+  const renderHighlightedText = () => {
+    if (!canonicalText || annotations.length === 0) {
+      return <pre className="whitespace-pre-wrap">{canonicalText}</pre>;
+    }
+
+    const segments: { text: string; annotation?: any }[] = [];
+    let lastIndex = 0;
+
+    // Sort annotations by startOffset
+    const sortedAnnotations = [...annotations].sort((a, b) => a.startOffset - b.startOffset);
+
+    sortedAnnotations.forEach((annotation) => {
+      // Add text before annotation
+      if (annotation.startOffset > lastIndex) {
+        segments.push({
+          text: canonicalText.slice(lastIndex, annotation.startOffset),
+        });
+      }
+
+      // Add annotated text
+      segments.push({
+        text: canonicalText.slice(annotation.startOffset, annotation.endOffset),
+        annotation,
+      });
+
+      lastIndex = annotation.endOffset;
+    });
+
+    // Add remaining text
+    if (lastIndex < canonicalText.length) {
+      segments.push({
+        text: canonicalText.slice(lastIndex),
+      });
+    }
+
+    return (
+      <pre className="whitespace-pre-wrap">
+        {segments.map((segment, index) => {
+          if (segment.annotation) {
+            const isSelected = selectedAnnotation?._id === segment.annotation._id;
+            const bgColor =
+              segment.annotation.type === 'CLAUSE'
+                ? 'bg-blue-200 hover:bg-blue-300'
+                : segment.annotation.type === 'RISK'
+                ? 'bg-red-200 hover:bg-red-300'
+                : 'bg-yellow-200 hover:bg-yellow-300';
+
+            return (
+              <span
+                key={index}
+                className={`${bgColor} ${
+                  isSelected ? 'ring-2 ring-offset-1 ring-purple-500' : ''
+                } cursor-pointer`}
+                onClick={() => onSelectAnnotation(segment.annotation)}
+                title={segment.annotation.content}
+              >
+                {segment.text}
+              </span>
+            );
+          }
+          return <span key={index}>{segment.text}</span>;
+        })}
+      </pre>
+    );
+  };
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      {/* Left Panel - Highlighted Text */}
+      <div className="lg:col-span-2">
+        <div className="bg-gray-50 p-4 rounded border border-gray-200 overflow-auto max-h-96 text-sm">
+          {renderHighlightedText()}
+        </div>
+      </div>
+
+      {/* Right Panel - Annotations List */}
+      <div className="lg:col-span-1">
+        <div className="space-y-2 max-h-96 overflow-auto">
+          <h4 className="font-semibold text-sm mb-2">Annotations ({annotations.length})</h4>
+          {annotations.map((annotation) => (
+            <div
+              key={annotation._id}
+              onClick={() => onSelectAnnotation(annotation)}
+              className={`p-3 border rounded cursor-pointer ${
+                selectedAnnotation?._id === annotation._id
+                  ? 'border-purple-500 bg-purple-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <span
+                  className={`text-xs px-2 py-1 rounded ${
+                    annotation.type === 'CLAUSE'
+                      ? 'bg-blue-200 text-blue-800'
+                      : annotation.type === 'RISK'
+                      ? 'bg-red-200 text-red-800'
+                      : 'bg-yellow-200 text-yellow-800'
+                  }`}
+                >
+                  {annotation.type}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {annotation.startOffset}-{annotation.endOffset}
+                </span>
+              </div>
+              <p className="text-sm text-gray-700">{annotation.content}</p>
+              <p className="text-xs text-gray-500 mt-1 italic">
+                "{canonicalText.slice(annotation.startOffset, annotation.endOffset).slice(0, 50)}
+                {annotation.endOffset - annotation.startOffset > 50 ? '...' : ''}"
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

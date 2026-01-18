@@ -162,6 +162,16 @@ class ApiClient {
     return this.request<any>(`/api/versions/${versionId}/analysis`);
   }
 
+  async generateAnnotations(versionId: string) {
+    return this.request<any>(`/api/versions/${versionId}/annotate`, {
+      method: 'POST',
+    });
+  }
+
+  async getAnnotations(versionId: string) {
+    return this.request<any>(`/api/versions/${versionId}/annotations`);
+  }
+
   async verifyContract(file: File, contractId: string, versionId?: string) {
     const formData = new FormData();
     formData.append('file', file);
