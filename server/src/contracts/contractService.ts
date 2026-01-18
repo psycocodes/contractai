@@ -43,6 +43,7 @@ export class ContractService {
     fileName: string,
     fileType: string,
     buffer: Buffer,
+    organizationId: string,
     contractId?: string
   ): Promise<UploadResult> {
     // 1. Canonicalize Content
@@ -61,13 +62,14 @@ export class ContractService {
 
     // Create or retrieve contract parent
     if (contractId) {
-      contract = await Contract.findById(contractId);
+      contract = await Contract.findOne({ _id: contractId, organizationId });
       if (!contract) {
-        throw new AppError('Contract not found', 404);
+        throw new AppError('Contract not found or access denied', 404);
       }
     } else {
       contract = await Contract.create({
         name: fileName,
+        organizationId,
       });
     }
 
@@ -128,12 +130,13 @@ export class ContractService {
   async verifyContract(
     file: Express.Multer.File,
     contractId: string,
+    organizationId: string,
     versionId?: string
   ): Promise<VerificationResult> {
     // 1. Find contract
-    const contract = await Contract.findById(contractId);
+    const contract = await Contract.findOne({ _id: contractId, organizationId });
     if (!contract) {
-       throw new AppError('Contract not found', 404);
+       throw new AppError('Contract not found or access denied', 404);
     }
 
     // 2. Canonicalize & Hash submitted file
@@ -205,25 +208,45 @@ export class ContractService {
     }
   }
 
-  async getContractById(contractId: string) {
-    const contract = await Contract.findById(contractId);
+  async getContracts(organizationId: string) {
+    const contracts = await Contract.find({ organizationId })
+      .sort({ createdAt: -1 });
+    return contracts;
+  }
+
+  async getContractById(contractId: string, organizationId: string) {
+    const contract = await Contract.findOne({ _id: contractId, organizationId });
     if (!contract) {
-      throw new AppError('Contract not found', 404);
+      throw new AppError('Contract not found or access denied', 404);
     }
     return contract;
   }
 
-  async getContractVersions(contractId: string) {
+  async getContractVersions(contractId: string, organizationId: string) {
+    // First verify contract belongs to organization
+    await this.getContractById(contractId, organizationId);
+    
     const versions = await ContractVersion.find({ contractId })
       .sort({ versionNumber: -1 });
     return versions;
   }
 
-  async getVersionById(versionId: string) {
-    const version = await ContractVersion.findById(versionId);
+  async getVersionById(versionId: string, organizationId: string) {
+    const version = await ContractVersion.findById(versionId).populate('contractId');
     if (!version) {
       throw new AppError('Version not found', 404);
     }
+    
+    // Verify the contract belongs to the organization
+    const contract = await Contract.findOne({ 
+      _id: version.contractId, 
+      organizationId 
+    });
+    
+    if (!contract) {
+      throw new AppError('Access denied to this version', 403);
+    }
+    
     return version;
   }
 }

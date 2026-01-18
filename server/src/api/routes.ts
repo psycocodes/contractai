@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import {
   uploadContract,
+  getContracts,
   getContract,
   getContractVersions,
   getVersion,
@@ -12,6 +13,21 @@ import {
   analyzeContract,
   getAnalysis,
 } from '../contracts/aiController';
+import { register, login, getCurrentUser } from '../auth/authController';
+import {
+  createOrganization,
+  getUserOrganizations,
+  switchOrganization,
+  getOrganization,
+} from '../organizations/organizationController';
+import {
+  inviteUser,
+  getPendingInvites,
+  acceptInvite,
+  getOrganizationInvites,
+} from '../invites/inviteController';
+import { authenticate, requireOrganizationAccess } from '../auth/authMiddleware';
+import { canUploadContracts, canReadContracts } from '../auth/roleMiddleware';
 
 const router = Router();
 
@@ -49,28 +65,116 @@ router.get('/health', (req, res) => {
   });
 });
 
-// Contract upload route
-router.post('/contracts/upload', upload.single('file'), handleMulterError, uploadContract);
+// ============================================
+// AUTH ROUTES (Public)
+// ============================================
+router.post('/auth/register', register);
+router.post('/auth/login', login);
 
-// Contract verify route
-router.post('/contracts/verify', upload.single('file'), handleMulterError, verifyContract);
+// Get current user (Protected)
+router.get('/auth/me', authenticate, getCurrentUser);
 
-// Get contract by ID
-router.get('/contracts/:contractId', getContract);
+// ============================================
+// ORGANIZATION ROUTES (Protected)
+// ============================================
+router.post('/organizations', authenticate, createOrganization);
+router.get('/organizations', authenticate, getUserOrganizations);
+router.post('/organizations/switch', authenticate, switchOrganization);
+router.get('/organizations/:organizationId', authenticate, getOrganization);
 
-// Get all versions of a contract
-router.get('/contracts/:contractId/versions', getContractVersions);
+// ============================================
+// INVITE ROUTES (Protected)
+// ============================================
+router.post('/invites', authenticate, requireOrganizationAccess, inviteUser);
+router.get('/invites/pending', authenticate, getPendingInvites);
+router.post('/invites/:inviteId/accept', authenticate, acceptInvite);
+router.get('/organizations/:organizationId/invites', authenticate, getOrganizationInvites);
 
-// Get specific version by ID
-router.get('/versions/:versionId', getVersion);
+// ============================================
+// CONTRACT ROUTES (Protected)
+// ============================================
 
-// Get canonical text for a version
-router.get('/versions/:versionId/canonical', getCanonicalText);
+// Get all contracts in organization
+router.get(
+  '/contracts',
+  authenticate,
+  requireOrganizationAccess,
+  canReadContracts,
+  getContracts
+);
 
-// Trigger AI analysis for a version
-router.post('/versions/:versionId/analyze', analyzeContract);
+// Contract upload route (requires upload permission)
+router.post(
+  '/contracts/upload',
+  upload.single('file'),
+  handleMulterError,
+  authenticate,
+  requireOrganizationAccess,
+  canUploadContracts,
+  uploadContract
+);
 
-// Get AI analysis results for a version
-router.get('/versions/:versionId/analysis', getAnalysis);
+// Contract verify route (requires upload permission)
+router.post(
+  '/contracts/verify',
+  upload.single('file'),
+  handleMulterError,
+  authenticate,
+  requireOrganizationAccess,
+  canUploadContracts,
+  verifyContract
+);
+
+// Get contract by ID (read access)
+router.get(
+  '/contracts/:contractId',
+  authenticate,
+  requireOrganizationAccess,
+  canReadContracts,
+  getContract
+);
+
+// Get all versions of a contract (read access)
+router.get(
+  '/contracts/:contractId/versions',
+  authenticate,
+  requireOrganizationAccess,
+  canReadContracts,
+  getContractVersions
+);
+
+// Get specific version by ID (read access)
+router.get(
+  '/versions/:versionId',
+  authenticate,
+  requireOrganizationAccess,
+  canReadContracts,
+  getVersion
+);
+
+// Get canonical text for a version (read access)
+router.get(
+  '/versions/:versionId/canonical',
+  authenticate,
+  requireOrganizationAccess,
+  canReadContracts,
+  getCanonicalText
+);
+
+// Trigger AI analysis for a version (all roles can trigger)
+router.post(
+  '/versions/:versionId/analyze',
+  authenticate,
+  requireOrganizationAccess,
+  analyzeContract
+);
+
+// Get AI analysis results for a version (all roles can view)
+router.get(
+  '/versions/:versionId/analysis',
+  authenticate,
+  requireOrganizationAccess,
+  getAnalysis
+);
 
 export default router;
